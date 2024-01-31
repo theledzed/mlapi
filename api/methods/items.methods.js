@@ -5,7 +5,7 @@ const getCategories = (dataRecived) => {
     (filters) => filters.id === "category",
   );
   if (categoriesFilter) {
-    const categoriesValues = categoriesFilter.values;
+    const categoriesValues = categoriesFilter.values[0].path_from_root;
     return categoriesValues.map((categories) => categories.name);
   } else if (categoriesAvailableFilters) {
     const categoriesValues = categoriesAvailableFilters.values;
@@ -30,11 +30,15 @@ const buildItem = (
     shipping,
     available_quantity,
     initial_quantity,
+    seller,
+    pictures,
   },
   description,
   initialQuantityReceived,
 ) => {
   const { free_shipping } = shipping;
+
+  const seller_name = seller && seller.nickname ? seller.nickname : "";
 
   const itemBody = {
     id,
@@ -47,12 +51,14 @@ const buildItem = (
     picture: thumbnail,
     condition,
     free_shipping,
+    seller_name,
   };
 
   if (description) {
     const { plain_text = null } = description;
     itemBody.sold_quantity = initial_quantity - initialQuantityReceived;
     itemBody.description = plain_text;
+    itemBody.picture = pictures[0].secure_url;
   } else {
     itemBody.available_quantity = available_quantity;
   }
